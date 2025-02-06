@@ -9,7 +9,7 @@
 # 5) reemplazar rango_edad_2019 por codificacion de naturales y 0
 # 6) dejar el dataframe inicial intacto y todas las modificaciones 
 #    hacerlas en el segundo dataframe, el de trabajo
-# 
+# 7) 
 # 
 
 
@@ -31,8 +31,10 @@ knitr::opts_chunk$set(echo = TRUE)
 listofpackages <- c("corrplot", "dplyr", "FactoMineR", "factoextra", 
                     "ggfortify", "ggplot2", "grid", "gridExtra", "gtExtras", 
                     "kableExtra", "knitr", "pastecs", "psych", "readr", "tidyverse")
-
-
+# Cita de Código
+# Código tomado de: https://github.com/lkovalevski/textsimilaritiesinR/tree/691b5798553d81a86b6c151557c4a667f8c58643/ejecutarAnalisisTexto.R
+# Autor: lkovalevski
+#
 newPackages <- listofpackages[ !(listofpackages %in% installed.packages()[, "Package"])]
 if(length(newPackages)) install.packages(newPackages)
 for (paquete in listofpackages) {
@@ -177,6 +179,11 @@ columnas_con_nulos <- df_seleccionados %>%
 
 print(columnas_con_nulos)
 
+
+# Cita de codigo
+## Licencia: desconocida
+## Autor: Arena, Cristian
+## Ajuste con parametros de corte y coeficientes propios
 
 # Función para calcular el rango de edad
 calcular_rango_edad_2019 <- function(proxy_edad_actual) {
@@ -462,7 +469,7 @@ ggpairs(col_numericas)  # Gráfico de pares alternativo
 
 
 #
-# CPA
+# PCA
 #
 
 # Realizar el análisis de componentes principales (PCA)
