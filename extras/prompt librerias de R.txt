@@ -1,0 +1,1 @@
+cuales son las librerias de R que utilizan los autores? Responder en forma de tabla. Incluir todas las librerias de R, clasificadas por  categorias. Ej:  biblioteca, uso, archivo en que aparece

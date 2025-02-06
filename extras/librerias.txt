@@ -1,0 +1,40 @@
+|-------------|---------------------------------------------------------------------|------------------------|
+| Biblioteca  | Uso                                                                 | Archivo en que aparece |
+|-------------|---------------------------------------------------------------------|------------------------|
+| arules      | Manejo y minería de reglas de asociación                            |                        |
+| arulesViz   | Visualización de reglas de asociación                               |                        |
+| seriation   | Métodos de ordenamiento para datos multivariantes                   |                        |
+| igraph      | Visualización de reglas asociativas usando técnicas de gráficos     |                        |
+| Rgraphviz   | Interfaz para visualización de reglas utilizando GraphViz           |                        |
+| dplyr       | Manipulación y transformación de datos                              | Página                 |
+| ggplot2     | Visualización de datos gráficos                                     | Página                 |
+| caret       | Construcción de modelos de aprendizaje automático                   | Página                 |
+| data.table  | Manipulación de datos eficiente                                     | Página                 |
+| stats       | Análisis estadístico, incluyendo PCA                                | T2, T3                 |
+| psych       | Análisis de correlaciones y PCA                                     | T3                     |
+| FactoMineR  | Análisis de datos multivariantes, incluyendo PCA                    | T2                     |
+| factoextra  | Visualización de análisis de clustering                             |                        |
+| knitr       | Generación de reportes en R Markdown                                |                        |
+| corrplot    | Visualización de matrices de correlación                            |                        |
+| skimr       | Resumen y exploración de datos                                      |                        |
+| cowplot     | Mejora de gráficos en ggplot2                                       |                        |
+| cluster     | Funciones para análisis de clúster y métodos de agrupamiento        | Página                 |
+| dendextend  | Facilita la manipulación de dendogramas y su visualización          | Página                 |
+| Tidyverse   | Conjunto de paquetes para la manipulación de datos y visualización  |                        |
+| devtools    | Desarrollo de paquetes y herramientas                               |                        |
+| numpy       | Manipulación de datos en Python                                     |                        |
+| pandas      | Manejo de estructuras de datos en Python                            |                        |
+| scipy       | Herramientas científicas en Python                                  |                        |
+| scikit-learn| Aprendizaje automático en Python                                    |                        |
+| tensorflow  | Aprendizaje profundo en Python                                      |                        |
+| MASS        | Funciones para análisis multivariado                                | Página                 |
+| pcaMethods  | Métodos avanzados de PCA                                            | Página                 |
+| Rtsne       | Reducción de dimensionalidad y visualización                        | Página                 |
+| rpart       | Ajuste de árboles CART                                              |                        |
+| tree        | Ajuste de árboles de decisión                                       |                        |
+| party       | Análisis de árboles de decisión                                     |                        |
+| readxl      | Leer archivos Excel                                                 |                        |
+| ggdendro    | Visualización de dendrogramas                                       |                        |
+| Matrix      | Manipulación de matrices                                            | Page                   |
+|-------------|---------------------------------------------------------------------|------------------------|
+
