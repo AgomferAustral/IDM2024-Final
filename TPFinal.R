@@ -1,26 +1,16 @@
 # TP Final IDM - trabajo
 
 
-# Pendientes al codigo: 
-# 1) frec de variables categoricas para cada valor
-# 2) ver codificacion: listo -> numeros enteros del 1 al 5 - 0 para NA
-# 3) dejarlas como variables numericas (para correlaciones)
-# 4) tipo_persona 23 y 24 -> desconocido (codificacion 0, 1 y 2)
-# 5) reemplazar rango_edad_2019 por codificacion de naturales y 0
-# 6) dejar el dataframe inicial intacto y todas las modificaciones 
+#############################################################
+# Pendientes al código: 
+# 1) Frecuencia de variables categóricas para cada valor
+# 2) Ver codificación: listo -> números enteros del 1 al 5 - 0 para NA
+# 3) Dejarlas como variables numéricas (para correlaciones)
+# 4) tipo_persona 23 y 24 -> desconocido (codificación 0, 1 y 2)
+# 5) Reemplazar rango_edad_2019 por codificación de naturales y 0
+# 6) Dejar el dataframe inicial intacto y todas las modificaciones 
 #    hacerlas en el segundo dataframe, el de trabajo
-# 7) 
-# 
-
-
-
-
-
-
-
-
-
-
+#############################################################
 
 
 
@@ -41,17 +31,15 @@ for (paquete in listofpackages) {
   suppressMessages(library(paquete, character.only = TRUE))
 }
 
-
-# Abrir el archivo que se encuentra en la carpeta datos_entrada
+# Abrimos el archivo que se encuentra en la carpeta datos_entrada
 archivo_datos <- readRDS("./datos_entrada/df_bcra_individuals.rds")
 
-# Describir el dataset
+# Describimos el dataset
 t(summary(archivo_datos))
 str(archivo_datos)
 t(head(archivo_datos))
 
-
-# Ver las columnas con datos nulos o faltantes
+# Vemos las columnas con datos nulos o faltantes
 columnas_con_nulos <- archivo_datos %>%
   summarise(across(everything(), ~ sum(is.na(.)))) %>%
   pivot_longer(cols = everything(), names_to = "columna", values_to = "num_nulos") %>%
@@ -59,61 +47,56 @@ columnas_con_nulos <- archivo_datos %>%
 
 print(columnas_con_nulos)
 
-# Asegurar que las columnas numéricas solo contienen datos numéricos
+# Nos aseguramos que las columnas numéricas solo contienen datos numéricos
 archivo_datos <- archivo_datos %>%
     mutate(across(where(is.numeric), ~ as.numeric(as.character(.))))
 
 
 
 
-
-
-
-# Realmente necesito que esten definidas como categoricas si para el analisis CPA 
-# deben ser numericas ordinales?
-
-# Hacer todas las modificaciones en otro dataframe, no el original
+#############################################################
+# Realmente necesito que estén definidas como categóricas si para el análisis CPA 
+# deben ser numéricas ordinales?
+# Hacemos todas las modificaciones en otro dataframe, no el original
+#############################################################
 
 
 
 
-# Asegurar que las columnas especificadas sean de tipo categórico
+# Nos aseguramos que las columnas especificadas sean de tipo categórico
 archivo_datos <- archivo_datos %>%
     mutate(across(c(tipo_persona, n_deudas_actual, situacion_mes_actual, tiene_garantia_actual, 
                    max_situacion_mes, max_sit_mes_con_garantia, max_sit_mes_sin_garantia, 
                    peor_situacion_respuesta, mora_mayor_30_dias, default), as.factor))
 
-
-# Verificar la estructura del dataset después de las conversiones
+# Verificamos la estructura del dataset después de las conversiones
 str(archivo_datos)
 
-
-
-
-# Verificacion de cantidad de registros que incumplen la condicion del enunciado
+#############################################################
+#
+# Verificamos la cantidad de registros que no cumplen la condición del enunciado
 #
 #    Con respecto al trabajo final les queríamos avisar que si bien en el
 #    enunciado dice que la muestra utilizada está compuesta por cuits cuyo 
 #    "monto total adeudado en ese momento no superaba los 100.000 pesos 
 #    argentinos.", en la base quedaron algunos casos (1705) que sí tienen 
-#    deuda total en Junio 2019 mayor a 100.000.
+#    deuda total en junio 2019 mayor a 100.000.
 # 
-
-
-cant <- sum(archivo_datos$deuda_total_actual > 100, na.rm = TRUE)
-
-print("Cant. registros estrictamente mayores a 100", cant)
+#############################################################
 
 cant <- sum(archivo_datos$deuda_total_actual > 100, na.rm = TRUE)
+print(paste("Cantidad de registros estrictamente mayores a 100:", cant))
 
-print("Cant. de registros mayores o iguales a 100", cant)
+cant <- sum(archivo_datos$deuda_total_actual >= 100, na.rm = TRUE)
+print(paste("Cantidad de registros mayores o iguales a 100:", cant))
 
-# Y porque los numeros están redondeados a miles, voy a filtrar los valores
+#############################################################
+# Y porque los números están redondeados a miles, voy a filtrar los valores
 # mayores o iguales a 100 en el campo deuda_total_actual, luego de 
-# verificar que a esa condicion 1705 registros la cumplen.
+# verificar que a esa condición 1705 registros la cumplen.
+#############################################################
 
-
-# Filtrar filas con deuda_total_actual mayor a 100
+# Filtramos filas con deuda_total_actual mayor a 100
 filas_con_deuda_mayor_100 <- archivo_datos %>%
     filter(deuda_total_actual >= 100)
 
@@ -121,18 +104,17 @@ filas_con_deuda_mayor_100 <- archivo_datos %>%
 df_seleccionados <- archivo_datos %>%
     filter(deuda_total_actual < 100)
 
-# Ver las filas con deuda_total_actual mayor a 100
+# Vemos las filas con deuda_total_actual mayor a 100
 print(filas_con_deuda_mayor_100)
 
 # Eliminar la columna id_individuo
 df_seleccionados <- df_seleccionados %>%
   select(-id_individuo)
 
-
-# Hacer un analisis exploratorio inicial de las variables
+# Hacemos un análisis exploratorio inicial de las variables
 #gt_plt_summary(df_seleccionados, title="Figura 1. Análisis exploratorio inicial de las variables en conjunto excluyendo deudas mayores a 100000")
 
-# Ver las columnas con datos nulos o faltantes
+# Vemos las columnas con datos nulos o faltantes
 columnas_con_nulos <- df_seleccionados %>%
     summarise_all(~ sum(is.na(.))) %>%
     pivot_longer(cols = everything(), names_to = "columna", values_to = "num_nulos") %>%
@@ -141,13 +123,15 @@ columnas_con_nulos <- df_seleccionados %>%
 print(columnas_con_nulos)
 
 
-# Creo una nueva categoria [0: No aplica] para la variable max_sit_mes_con_garantia para aquellos 
-# registros que no tienen deuda con garantia y tienen valor NA
+#############################################################
+# Creamos una nueva categoría [0: No aplica] para la variable max_sit_mes_con_garantia para aquellos 
+# registros que no tienen deuda con garantía y tienen valor NA
+#############################################################
 
-# Asignar 0 a max_sit_mes_con_garantia si deuda_con_garantia_actual es 0 y max_sit_mes_con_garantia es NA
+
+# Asignamos 0 a max_sit_mes_con_garantia si deuda_con_garantia_actual es 0 y max_sit_mes_con_garantia es NA
 df_seleccionados <- df_seleccionados %>%
     mutate(max_sit_mes_con_garantia = ifelse(is.na(max_sit_mes_con_garantia) & deuda_con_garantia_actual == 0, 0, max_sit_mes_con_garantia))
-
 
 # Volver a ver las columnas con datos nulos o faltantes
 columnas_con_nulos <- df_seleccionados %>%
@@ -157,19 +141,17 @@ columnas_con_nulos <- df_seleccionados %>%
 
 print(columnas_con_nulos)
 
-
-# Filtrar y seleccionar las columnas deseadas para registros con max_sit_mes_sin_garantia = NA
+# Filtramos y seleccionamos las columnas deseadas para registros con max_sit_mes_sin_garantia = NA
 registros_con_na <- df_seleccionados %>%
     filter(is.na(max_sit_mes_sin_garantia)) %>%
     select(deuda_total_actual, deuda_con_garantia_actual, prop_con_garantia_actual, tiene_garantia_actual, max_sit_mes_sin_garantia)
 
-# Ver los registros filtrados
+# Vemos los registros filtrados
 print(registros_con_na)
 
-# Asignar 0 a max_sit_mes_sin_garantia si prop_con_garantia_actual es 1 y max_sit_mes_sin_garantia es NA
+# Asignamos 0 a max_sit_mes_sin_garantia si prop_con_garantia_actual es 1 y max_sit_mes_sin_garantia es NA
 df_seleccionados <- df_seleccionados %>%
     mutate(max_sit_mes_sin_garantia = ifelse(is.na(max_sit_mes_sin_garantia) & prop_con_garantia_actual == 1, 0, max_sit_mes_sin_garantia))
-
 
 # Volver a ver las columnas con datos nulos o faltantes
 columnas_con_nulos <- df_seleccionados %>%
@@ -180,10 +162,13 @@ columnas_con_nulos <- df_seleccionados %>%
 print(columnas_con_nulos)
 
 
-# Cita de codigo
+#############################################################
+# Cita de código
 ## Licencia: desconocida
 ## Autor: Arena, Cristian
-## Ajuste con parametros de corte y coeficientes propios
+## Actualización: Ajuste con parámetros de corte y coeficientes propios
+#############################################################
+
 
 # Función para calcular el rango de edad
 calcular_rango_edad_2019 <- function(proxy_edad_actual) {
@@ -191,7 +176,7 @@ calcular_rango_edad_2019 <- function(proxy_edad_actual) {
     return(NA)
   }
   
-  # Calcular año de nacimiento
+  # Calculamos año de nacimiento
   if (proxy_edad_actual >= 500) {
     anio_nacimiento <- 2010 + floor((proxy_edad_actual - 500)/10)
   } else if (proxy_edad_actual >= 424) {
@@ -208,10 +193,10 @@ calcular_rango_edad_2019 <- function(proxy_edad_actual) {
     anio_nacimiento <- 1920 + floor((proxy_edad_actual - 20) / 1.25)
   }
   
-  # Calcular edad en 2019
+  # Calculamos edad en 2019
   edad_2019 <- 2019 - anio_nacimiento
   
-  # Asignar rango de edad
+  # Asignamos rango de edad
   if (edad_2019 < 20) {
     rango_edad <- "<20"
   } else if (edad_2019 <= 30) {
@@ -237,26 +222,19 @@ print("Resumen de rangos de edad al 2019:")
 print(table(df_seleccionados$rango_edad_2019))
 
 # Mostramos algunas filas de ejemplo
-print("\
-Ejemplos de registros con el rango de edad al 2019:")
+print("Ejemplos de registros con el rango de edad al 2019:")
 print(head(df_seleccionados[, c("proxy_edad_actual", "rango_edad_2019")]))
 
-
-# Asegurar que la columna rango_edad_2019 sea de tipo categórico
+# Aseguramos que la columna rango_edad_2019 sea de tipo categórico
 df_seleccionados <- df_seleccionados %>%
     mutate(rango_edad_2019 = as.factor(rango_edad_2019))
 
-
-# Hacer un analisis exploratorio inicial de las variables
+# Hacemos un análisis exploratorio inicial de las variables
 #gt_plt_summary(df_seleccionados, title="Figura 2. Análisis exploratorio inicial de las variables en conjunto excluyendo deudas mayores a 100000, sin valores nulos")
 
 
 
-#
-# Analisis univariado
-#
-
-
+# Análisis univariado
 
 df2 <- pastecs::stat.desc(df_seleccionados) %>% as.matrix %>% as.data.frame %>% round(2)
 
@@ -267,15 +245,10 @@ df2 <- df2 %>%
 
 knitr::kable(t(data.frame(df2)), digits = 2)
 
-
-
-# Utilizando la función summary para describir la distribución univariada de cada columna
+# Utilizamos la función summary para describir la distribución univariada de cada columna
 summary(df_seleccionados)
 
-
-#
 # Alternativa A
-#
 
 # Función para crear gráficos de distribución
 plot_distribution <- function(data, column) {
@@ -290,20 +263,18 @@ plot_distribution <- function(data, column) {
   }
 }
 
-
-#
 # Alternativa B
-#
 
-library(MASS)     # Permite calcular el numero optimo de bins
+library(MASS)     # Permite calcular el número optimo de bins
 
-# Se calcula el número óptimo de bins (intervalos) para el histograma utilizando 
+
+#############################################################
+# Calculamos el número óptimo de bins (intervalos) para el histograma utilizando 
 # la regla de Freedman-Diaconis a través de la función nclass.FD del paquete MASS
 
 # La Regla de Freedman-Diaconis es un método para determinar el tamaño óptimo de 
 # los bins (intervalos) en un histograma. Busca un balance entre precisión y suavidad
 # en la distribución de los datos, evitando histogramas con demasiados o muy pocos bins.
-
 
 # Fórmula de Freedman-Diaconis
 # Bin width=2×IQRn1/3
@@ -320,14 +291,13 @@ library(MASS)     # Permite calcular el numero optimo de bins
 #    Es robusto frente a valores atípicos (outliers).
 #    Proporciona una mejor representación de la dispersión de los datos que la
 #    desviación estándar.
-
-
+#############################################################
 
 
 # Función para crear gráficos de distribución
 plot_distribution <- function(data, column) {
   if (is.numeric(data[[column]])) {
-    # Calcular el número óptimo de bins usando la regla de Freedman-Diaconis
+    # Calculamos el número óptimo de bins usando la regla de Freedman-Diaconis
     num_bins <- nclass.FD(data[[column]])
     ggplot(data, aes_string(x = column)) +
       geom_histogram(bins = num_bins, fill = "blue", color = "black") +
@@ -341,18 +311,13 @@ plot_distribution <- function(data, column) {
   }
 }
 
-
-
-
-# Crear una lista de gráficos de distribución para cada columna
+# Creamos una lista de gráficos de distribución para cada columna
 plots <- lapply(colnames(df_seleccionados), function(column) {
   plot_distribution(df_seleccionados, column)
 })
 
-# Presentar los gráficos en una matriz
+# Presentamos los gráficos en una matriz
 do.call(grid.arrange, c(plots, ncol = 6))
-
-
 
 # Función para crear boxplots
 plot_boxplot <- function(data, column) {
@@ -361,23 +326,20 @@ plot_boxplot <- function(data, column) {
     labs(title = paste("Boxplot de", column), y = column)
 }
 
-# Crear una lista de gráficos de boxplot para cada columna numérica
+# Creamos una lista de gráficos de boxplot para cada columna numérica
 boxplots <- lapply(names(df_seleccionados), function(column) {
   if (is.numeric(df_seleccionados[[column]])) {
     plot_boxplot(df_seleccionados, column)
   }
 })
 
-# Filtrar los elementos NULL de la lista
+# Filtramos los elementos NULL de la lista
 boxplots <- Filter(Negate(is.null), boxplots)
 
-# Presentar los gráficos en una matriz
+# Presentamos los gráficos en una matriz
 do.call(grid.arrange, c(boxplots, ncol = 6))
 
-
-#
 # Outliers
-#
 
 # Función para identificar outliers usando el IQR
 identify_outliers <- function(data, column) {
@@ -391,7 +353,7 @@ identify_outliers <- function(data, column) {
   return(outliers)
 }
 
-# Identificar outliers para cada columna numérica
+# Identificamos outliers para cada columna numérica
 outliers_list <- lapply(names(df_seleccionados), function(column) {
   if (is.numeric(df_seleccionados[[column]])) {
     outliers <- identify_outliers(df_seleccionados, column)
@@ -402,52 +364,47 @@ outliers_list <- lapply(names(df_seleccionados), function(column) {
   return(NULL)
 })
 
-# Filtrar los elementos NULL de la lista
+# Filtramos los elementos NULL de la lista
 outliers_list <- Filter(Negate(is.null), outliers_list)
 
-# Mostrar los outliers identificados
+# Mostramos los outliers identificados
 for (outlier_info in outliers_list) {
   cat("Outliers en la columna:", outlier_info$column, "\n")
   print(outlier_info$outliers)
   cat("\n")
 }
 
-
-#
 # Correlaciones
-#
 
-# Eliminar las columnas categoricas no ordinales y hacer ordinales aquellas 
+
+#############################################################
+# Eliminamos las columnas categoricas no ordinales y hacer ordinales aquellas 
 # que puedan serlo
+#############################################################
 
 
-
-
-# Filtrar las columnas numéricas del DataFrame
+# Filtramos las columnas numéricas del DataFrame
 col_numericas <- df_seleccionados %>%
   select_if(is.numeric)
 
-# Calcular la matriz de correlaciones
+# Calculamos la matriz de correlaciones
 matriz_corr <- cor(col_numericas, use = "complete.obs")
 
-# Mostrar la matriz de correlaciones
+# Mostramos la matriz de correlaciones
 print(matriz_corr)
 
-# Visualizar la matriz de correlaciones
+# Visualizamos la matriz de correlaciones
 corrplot(matriz_corr, method = "color", type = "upper", 
          tl.col = "black", tl.srt = 45, addCoef.col = "black")
 
-
-
-
 # Correlaciones 2 
 
-# Guardar el gráfico en un archivo PNG
+# Guardamos el gráfico en un archivo PNG
 png("pairs_panels.png", width = 1200, height = 1200)
 par(mar = c(2, 2, 2, 2))
 options(repr.plot.width = 10, repr.plot.height = 8)  # Ajusta el ancho y alto
 
-# Crear el gráfico de pares
+# Creamos el gráfico de pares
 pairs.panels(
   col_numericas,
   method = "pearson",  # correlation
@@ -456,21 +413,12 @@ pairs.panels(
   ellipses = F     # show correlation ellipses
 )
 
-
-
-
 # Correlaciones 3
 
 library(GGally)
 ggpairs(col_numericas)  # Gráfico de pares alternativo
 
-
-
-
-
-#
 # PCA
-#
 
 # Realizar el análisis de componentes principales (PCA)
 pca_result <- prcomp(col_numericas, scale. = TRUE)
@@ -483,14 +431,14 @@ var_explicada <- summary(pca_result)$importance[2, 1:2]
 cat("Porcentaje de la variabilidad total explicada por las dos primeras componentes:\n")
 print(var_explicada)
 
-# Crear un DataFrame con las componentes principales
+# Creamos un DataFrame con las componentes principales
 pca_df <- as.data.frame(pca_result$x)
 
-# Añadir la columna tipo_persona al DataFrame de PCA
+# Añadimos la columna tipo_persona al DataFrame de PCA
 pca_df <- pca_df %>%
   mutate(tipo_persona = df_seleccionados$tipo_persona)
 
-# Visualizar las dos primeras componentes principales
+# Visualizamos las dos primeras componentes principales
 ggplot(pca_df, aes(x = PC1, y = PC2, color = tipo_persona)) +
   geom_point(alpha = 0.7) +
   labs(title = "PCA: Primeras dos componentes principales",
