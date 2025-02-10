@@ -1,19 +1,6 @@
 # TP Final IDM - trabajo
 
 
-#############################################################
-# Pendientes al código: 
-# 1) Frecuencia de variables categóricas para cada valor
-# 2) Ver codificación: listo -> números enteros del 1 al 5 - 0 para NA
-# 3) Dejarlas como variables numéricas (para correlaciones)
-# 4) tipo_persona 23 y 24 -> desconocido (codificación 0, 1 y 2)
-# 5) Reemplazar rango_edad_2019 por codificación de naturales y 0
-# 6) Dejar el dataframe inicial intacto y todas las modificaciones 
-#    hacerlas en el segundo dataframe, el de trabajo
-#############################################################
-
-
-
 # Importar bibliotecas
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -47,8 +34,14 @@ columnas_con_nulos <- archivo_datos %>%
 
 print(columnas_con_nulos)
 
+
+# Hacemos una copia del dataset para trabajar en el manteniendo el original
+
+df_datos <- archivo_datos
+
 # Nos aseguramos que las columnas numéricas solo contienen datos numéricos
-archivo_datos <- archivo_datos %>%
+
+df_datos <- df_datos %>%
     mutate(across(where(is.numeric), ~ as.numeric(as.character(.))))
 
 
@@ -64,58 +57,41 @@ archivo_datos <- archivo_datos %>%
 
 
 # Nos aseguramos que las columnas especificadas sean de tipo categórico
-archivo_datos <- archivo_datos %>%
+df_datos <- df_datos %>%
     mutate(across(c(tipo_persona, n_deudas_actual, situacion_mes_actual, tiene_garantia_actual, 
                    max_situacion_mes, max_sit_mes_con_garantia, max_sit_mes_sin_garantia, 
                    peor_situacion_respuesta, mora_mayor_30_dias, default), as.factor))
 
 # Verificamos la estructura del dataset después de las conversiones
-str(archivo_datos)
+str(df_datos)
 
-#############################################################
-#
-# Verificamos la cantidad de registros que no cumplen la condición del enunciado
-#
-#    Con respecto al trabajo final les queríamos avisar que si bien en el
-#    enunciado dice que la muestra utilizada está compuesta por cuits cuyo 
-#    "monto total adeudado en ese momento no superaba los 100.000 pesos 
-#    argentinos.", en la base quedaron algunos casos (1705) que sí tienen 
-#    deuda total en junio 2019 mayor a 100.000.
-# 
-#############################################################
 
-cant <- sum(archivo_datos$deuda_total_actual > 100, na.rm = TRUE)
-print(paste("Cantidad de registros estrictamente mayores a 100:", cant))
+# Recodificamos Tipo_persona
 
-cant <- sum(archivo_datos$deuda_total_actual >= 100, na.rm = TRUE)
-print(paste("Cantidad de registros mayores o iguales a 100:", cant))
+df_datos <- df_datos %>%
+  mutate(
+    sexo_cat = case_when(
+      tipo_persona == 20 ~ "Hombre",
+      tipo_persona == 27 ~ "Mujer",
+      tipo_persona %in% c(23, 24) ~ "Desconocido"
+    ),
+    sexo_num = case_when(
+      tipo_persona == 20 ~ 0,  # Hombre → 0
+      tipo_persona == 27 ~ 1,  # Mujer → 1
+      tipo_persona %in% c(23, 24) ~ 2  # Desconocido → 2
+    )
+  )
 
-#############################################################
-# Y porque los números están redondeados a miles, voy a filtrar los valores
-# mayores o iguales a 100 en el campo deuda_total_actual, luego de 
-# verificar que a esa condición 1705 registros la cumplen.
-#############################################################
-
-# Filtramos filas con deuda_total_actual mayor a 100
-filas_con_deuda_mayor_100 <- archivo_datos %>%
-    filter(deuda_total_actual >= 100)
-
-# Excluir registros con deuda_total_actual mayor a 100
-df_seleccionados <- archivo_datos %>%
-    filter(deuda_total_actual < 100)
-
-# Vemos las filas con deuda_total_actual mayor a 100
-print(filas_con_deuda_mayor_100)
 
 # Eliminar la columna id_individuo
-df_seleccionados <- df_seleccionados %>%
+df_datos <- df_datos %>%
   select(-id_individuo)
 
 # Hacemos un análisis exploratorio inicial de las variables
-#gt_plt_summary(df_seleccionados, title="Figura 1. Análisis exploratorio inicial de las variables en conjunto excluyendo deudas mayores a 100000")
+#gt_plt_summary(df_datos, title="Figura 1. Análisis exploratorio inicial de las variables en conjunto excluyendo deudas mayores a 100000")
 
 # Vemos las columnas con datos nulos o faltantes
-columnas_con_nulos <- df_seleccionados %>%
+columnas_con_nulos <- df_datos %>%
     summarise_all(~ sum(is.na(.))) %>%
     pivot_longer(cols = everything(), names_to = "columna", values_to = "num_nulos") %>%
     filter(num_nulos > 0)
@@ -130,11 +106,11 @@ print(columnas_con_nulos)
 
 
 # Asignamos 0 a max_sit_mes_con_garantia si deuda_con_garantia_actual es 0 y max_sit_mes_con_garantia es NA
-df_seleccionados <- df_seleccionados %>%
+df_datos <- df_datos %>%
     mutate(max_sit_mes_con_garantia = ifelse(is.na(max_sit_mes_con_garantia) & deuda_con_garantia_actual == 0, 0, max_sit_mes_con_garantia))
 
 # Volver a ver las columnas con datos nulos o faltantes
-columnas_con_nulos <- df_seleccionados %>%
+columnas_con_nulos <- df_datos %>%
     summarise_all(~ sum(is.na(.))) %>%
     pivot_longer(cols = everything(), names_to = "columna", values_to = "num_nulos") %>%
     filter(num_nulos > 0)
@@ -142,24 +118,30 @@ columnas_con_nulos <- df_seleccionados %>%
 print(columnas_con_nulos)
 
 # Filtramos y seleccionamos las columnas deseadas para registros con max_sit_mes_sin_garantia = NA
-registros_con_na <- df_seleccionados %>%
+registros_con_na <- df_datos %>%
     filter(is.na(max_sit_mes_sin_garantia)) %>%
     select(deuda_total_actual, deuda_con_garantia_actual, prop_con_garantia_actual, tiene_garantia_actual, max_sit_mes_sin_garantia)
 
-# Vemos los registros filtrados
+# Verificamos los registros filtrados
 print(registros_con_na)
 
 # Asignamos 0 a max_sit_mes_sin_garantia si prop_con_garantia_actual es 1 y max_sit_mes_sin_garantia es NA
-df_seleccionados <- df_seleccionados %>%
+df_datos <- df_datos %>%
     mutate(max_sit_mes_sin_garantia = ifelse(is.na(max_sit_mes_sin_garantia) & prop_con_garantia_actual == 1, 0, max_sit_mes_sin_garantia))
 
 # Volver a ver las columnas con datos nulos o faltantes
-columnas_con_nulos <- df_seleccionados %>%
+columnas_con_nulos <- df_datos %>%
     summarise_all(~ sum(is.na(.))) %>%
     pivot_longer(cols = everything(), names_to = "columna", values_to = "num_nulos") %>%
     filter(num_nulos > 0)
 
 print(columnas_con_nulos)
+
+
+#
+# Aca puedo verificar que ya no tengo valores nulos
+#
+
 
 
 #############################################################
@@ -215,22 +197,109 @@ calcular_rango_edad_2019 <- function(proxy_edad_actual) {
 }
 
 # Creamos nueva columna con rango de edad calculado para cada individuo
-df_seleccionados$rango_edad_2019 <- sapply(df_seleccionados$proxy_edad_actual, calcular_rango_edad_2019)
+df_datos$rango_edad_2019 <- sapply(df_datos$proxy_edad_actual, calcular_rango_edad_2019)
 
 # Mostramos un resumen de los resultados
 print("Resumen de rangos de edad al 2019:")
-print(table(df_seleccionados$rango_edad_2019))
+print(table(df_datos$rango_edad_2019))
 
 # Mostramos algunas filas de ejemplo
 print("Ejemplos de registros con el rango de edad al 2019:")
-print(head(df_seleccionados[, c("proxy_edad_actual", "rango_edad_2019")]))
+print(head(df_datos[, c("proxy_edad_actual", "rango_edad_2019")]))
+
+
+df_datos <- df_datos %>%
+  mutate(
+    cat_edad = case_when(
+      rango_edad_2019 == "<20"    ~ 0,
+      rango_edad_2019 == "20-29"  ~ 1,
+      rango_edad_2019 == "30-39"  ~ 2,
+      rango_edad_2019 == "40-49"  ~ 3,
+      rango_edad_2019 == "50-60"  ~ 4,
+      TRUE                        ~ 5  # Cualquier otro valor
+    )
+  )
+
 
 # Aseguramos que la columna rango_edad_2019 sea de tipo categórico
-df_seleccionados <- df_seleccionados %>%
-    mutate(rango_edad_2019 = as.factor(rango_edad_2019))
+df_datos <- df_datos %>%
+    mutate(rango_edad_2019 = as.factor(rango_edad_2019),
+           sexo_cat = as.factor(sexo_cat)
+           )
+
+
+
+
+
+
+
+
+
+
+#############################################################
+#
+# Verificamos la cantidad de registros que no cumplen la condición del enunciado
+#
+#    Con respecto al trabajo final les queríamos avisar que si bien en el
+#    enunciado dice que la muestra utilizada está compuesta por cuits cuyo 
+#    "monto total adeudado en ese momento no superaba los 100.000 pesos 
+#    argentinos.", en la base quedaron algunos casos (1705) que sí tienen 
+#    deuda total en junio 2019 mayor a 100.000.
+# 
+#############################################################
+
+cant <- sum(df_datos$deuda_total_actual > 100, na.rm = TRUE)
+print(paste("Cantidad de registros estrictamente mayores a 100:", cant))
+
+cant <- sum(df_datos$deuda_total_actual >= 100, na.rm = TRUE)
+print(paste("Cantidad de registros mayores o iguales a 100:", cant))
+
+#############################################################
+# Y porque los números están redondeados a miles, voy a filtrar los valores
+# mayores o iguales a 100 en el campo deuda_total_actual, luego de 
+# verificar que a esa condición 1705 registros la cumplen.
+#############################################################
+
+# Filtramos filas con deuda_total_actual mayor a 100
+filas_con_deuda_mayor_100 <- df_datos %>%
+    filter(deuda_total_actual >= 100)
+
+# Excluir registros con deuda_total_actual mayor a 100
+df_seleccionados <- df_datos %>%
+    filter(deuda_total_actual < 100)
+
+# Vemos las filas con deuda_total_actual mayor a 100
+print(filas_con_deuda_mayor_100)
+
+
 
 # Hacemos un análisis exploratorio inicial de las variables
 #gt_plt_summary(df_seleccionados, title="Figura 2. Análisis exploratorio inicial de las variables en conjunto excluyendo deudas mayores a 100000, sin valores nulos")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
