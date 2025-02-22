@@ -1,0 +1,692 @@
+---
+title: "TPFinal BCRA"
+format: html
+editor: visual
+---
+
+CASO Introduccion: ESTUDIO DE LAS DEUDAS REGISTRADAS DEL SISTEMA FINANCIERO ARGENTINO El Banco Central de la República Argentina (BCRA) publica mensualmente un informe consolidado de deudas actuales e históricas (24 meses), denominado 'Central de Deudores del Sistema Financiero' elaborado en función de los datos recibidos de distintos tipos de entidades financieras (entidades financieras, empresas no financieras emisoras de tarjetas, fideicomisos financieros, otros proveedores no financieros de crédito, etc.), las cuales deben obligatoriamente remitir mensualmente al BCRA, detallando la totalidad de las financiaciones con la correspondiente situación de cada deudor. Cada deuda informada al BCRA es acompañada de su situación que es una aproximación a la cantidad de días de atraso en el cumplimiento de pago: Situación 1 \| Situación normal: atraso en el pago que no supere los 31 días. Situación 2 \| Riesgo bajo: atraso en el pago de más de 31 días y hasta 90 días. Situación 3 \| Riesgo miedo: atraso en el pago de más de 90 días y hasta 180 días. Situación 4 \| Riesgo alto: atraso en el pago de más de 180 días a un año. Situación 5 \| Irrecuperable: atraso superior a un año. Situación 6 \| Irrecuperable por disposición técnica: deuda con una ex entidad. Se cuenta con una muestra aleatoria de 19.737 cuits de personas físicas que tenían al menos una de deuda en el sistema financiero en Junio de 2019, que se encontraban en situación crediticia 1 o 2 (es decir, que no tuvieran atrasos mayores a 90 días) y cuyo monto total adeudado en ese momento no superaba los 100.000 pesos argentinos. Para los cuits de la muestra aleatoria se registraron y resumieron las deudas en todas las entidades en Junio de 2019 y también 6 meses hacia atrás. También se registraron las deudas de esos cuits entre Julio 2019 y Junio 2020 para poder evaluar su evolución.
+
+Muestra del dataset:
+
+tipo_persona n_deudas_actual proxy_edad_actual deuda_total_actual deuda_con_garantia_actual situacion_mes_actual prop_con_garantia_actual tiene_garantia_actual mora_30_dias_mes_actual n_meses_seg_bcra media_deuda_total media_deuda_situacion_1 media_deuda_situacion_2 media_deuda_con_garantia media_deuda_sin_garantia media_deuda_en_default max_situacion_mes max_sit_mes_con_garantia max_sit_mes_sin_garantia media_prop_situacion_1 media_prop_situacion_2 media_prop_default media_prop_con_garantia prop_tuvo_garantia prop_mora_30_dias_seg prop_default_seg peor_situacion_respuesta default mora_mayor_30_dias 23 1 359 126 126 1 1 1 0 7 156 156 0 153,857142857143 2,14285714285714 0 1 1 1 1 0 0 0,987475247418321 1 0 0 1 0 0 27 1 303 1 0 1 0 0 0 6 2,83333333333333 2,83333333333333 0 0 2,83333333333333 0 1 1 1 0 0 0 0 0 0 1 0 0 27 2 258 14 0 1 0 0 0 7 27,2857142857143 27,2857142857143 0 0 27,2857142857143 0 1 1 1 0 0 0 0 0 0 1 0 0 20 1 274 13 0 2 0 0 1 7 8,85714285714286 7 1,85714285714286 0 8,85714285714286 0 2 2 0,857142857142857 0,142857142857143 0 0 0 0,142857142857143 0 2 0 1 20 2 164 55 0 1 0 0 0 7 67,7142857142857 67,7142857142857 0 0 67,7142857142857 0 1 1 1 0 0 0 0 0 0 1 0 0 27 1 149 24 0 1 0 0 0 7 27,8571428571429 27,8571428571429 0 0 27,8571428571429 0 1 1 1 0 0 0 0 0 0 5 1 1 23 1 174 13 0 1 0 0 0 6 14,8333333333333 14,8333333333333 0 0 14,8333333333333 0 1 1 1 0 0 0 0 0 0 1 0 0 20 2 329 78 0 1 0 0 0 7 54,2857142857143 53,4285714285714 0,857142857142857 0 54,2857142857143 0 2 2 0,976808905380334 0,0231910946196661 0 0 0 0,285714285714286 0 1 0 0 27 3 399 52 0 1 0 0 0 7 42,2857142857143 42,2857142857143 0 0 42,2857142857143 0 1 1 1 0 0 0 0 0 0 1 0 0 20 1 379 8 0 1 0 0 0 7 15,8571428571429 15,8571428571429 0 0 15,8571428571429 0 1 1 1 0 0 0 0 0 0 1 0 0
+
+Descripcion de las variables:
+
+orden, variable, detalle 1, id_individuo, identificación del individuo (anonimizada). 2, tipo_persona, primeros dos dígitos del cuit (20: hombres; 27: mujeres). 3, n_deudas_actual, cantidad de entidades en las que el cuit tenía al menos una deuda en Jun-2019. 4, proxy_edad_actual, tres primeros números del dni. 5, deuda_total_actual, monto total de deuda en Jun-2019 (expresada en miles de pesos). 6, deuda_con_garantia_actual, monto total de deuda garantizada en Jun-2019 (expresada en miles de pesos). 7, situacion_mes_actual, situación crediticia más grave en todas las deudas del cuit en Jun-2019. 8, prop_con_garantia_actual, proporción de la deuda garantizada en Jun-2019 9, tiene_garantia_actual, variable indicadora (0: no, 1: si) de si el cuit tenía al menos una deuda garantizada en Jun-2019. 10, mora_30_dias_mes_actual, variable indicadora (0: no, 1: si) de si el cuit estaba en situación 2 en Jun-2019. 11, n_meses_seg_bcra, cantidad de meses en los que el cuit tenía al menos una deuda informada en el sistema financiero, entre Dic-2018 y Jun-2019. 12, media_deuda_total, promedio de la deuda total entre Dic-2018 y Jun-2019. 13, media_deuda_situacion_1, promedio de la deuda en situación 1 entre Dic-2018 y Jun-2019. 14, media_deuda_situacion_2, promedio de la deuda en situación 2 entre Dic-2018 y Jun-2019. 15, media_deuda_con_garantia, promedio de la deuda garantizada entre Dic-2018 y Jun-2019. 16, media_deuda_sin_garantia, promedio de la deuda no garantizada entre Dic-2018 y Jun-2019. 17, media_deuda_en_default, promedio de la deuda en defaut (situación 3 o peor) entre Dic-2018 y Jun-2019. 18, max_situacion_mes, maxima situación entre Dic-2018 y Jun-2019. 19, max_sit_mes_con_garantia, maxima situación en las deudas garantizadas entre Dic-2018 y Jun-2019. 20, max_sit_mes_sin_garantia, maxima situación en las deudas no garantizadas entre Dic-2018 y Jun-2019. 21, media_prop_situacion_1, promedio de la proporción de deuda en situación 1 entre Dic-2018 y Jun-2019. 22, media_prop_situacion_2, promedio de la proporción de deuda en situación 2 entre Dic-2018 y Jun-2019. 23, media_prop_default, promedio de la proporción de deuda en default entre Dic-2018 y Jun-2019. 24, media_prop_con_garantia, promedio de la proporción de deuda garantizada entre Dic-2018 y Jun-2019. 25, prop_tuvo_garantia, proporción de meses en los cuales el cuit tuvo deuda garantizada, entre Dic-2018 y Jun-2019. 26, prop_mora_30_dias_seg, proporción de meses en los cuales el cuit estuvo en situación 2, entre Dic-2018 y Jun-2019. 27, prop_default_seg, proporción de meses en los cuales el cuit estuvo en default, entre Dic-2018 y Jun-2019. 28, peor_situacion_respuesta, situación crediticia más grave en todas las deudas del cuit entre Jul-2019 y Jun-2020. 29, default, situación crediticia más grave mayor o igual 3 en todas las deudas del cuit entre Jul-2019 y Jun-2020. 30, mora_mayor_30_dias, situación crediticia más grave igual 2 en todas las deudas del cuit entre Jul-2019 y Jun-2020
+
+Consignas a. Describa la distribución univariada de las variables presente en el conjunto de datos. ¿Se evidencian outliers en alguna de ellas? b. Calcule e interprete la matriz de correlaciones de variables disponibles a Jun-2019 (las posibles predictores de default en el período Jul-2019 a Jun-2020). c. Realice un análisis de componentes principales sobre las mismas variables. ¿Qué porcentaje de la variabilidad total logran explicar las dos primeras componentes? ¿Es posible realizar una interpretación sobre los componentes? ¿Cuál? ¿Logran esas componentes diferenciar a los cuits según el tipo de persona? d. ¿Existen distintos subgrupos de cuits en los datos? ¿Cuántos logra identificar? ¿Qué características tienen? Explique la metodología utilizada. e. Construya un modelo predictivo para a variable respuesta ‘default’ utilizando sólo las variables disponibles a Jun-2019. ¿Qué capacidad predictiva tiene ese modelo? f. ¿Utilizaría el modelo construido para evaluar futuros solicitantes de un crédito? Justifique su respuesta.
+
+Aclaraciones:
+
+Se utilizaran los metodos necesarios: reglas de asociacion, PCA, analisis de clusters, arboles de clasificacion y regresion (cart y/o random forest), siguiendo las pautas de estilo de tidyverse trabajando en R + quarto
+
+Se entiende el problema? Necesitas mas informacion?
+
+###### ChatGPT Plus
+
+| 
+
+Sí, el problema está bien planteado y las consignas son claras. Se realizará un análisis detallado de la distribución de variables, detección de outliers, correlaciones, PCA, clustering y modelado predictivo con CART y/o Random Forest.
+
+Solo unas aclaraciones para confirmar:
+
+1.  ¿Se requiere un preprocesamiento específico, como transformación de variables o imputación de valores faltantes?
+
+2.  ¿Se debe comparar diferentes modelos predictivos o solo uno?
+
+3.  ¿Se usará una métrica específica para evaluar el modelo (AUC, precisión, F1-score, etc.)?
+
+4.  ¿El objetivo final es solo evaluar la capacidad predictiva o también proporcionar recomendaciones sobre la concesión de créditos?
+
+Si hay algún otro detalle relevante, avísame antes de comenzar.
+
+##### Tú dijiste:
+
+1\. si. a la columna max_sit_mes_con_garantia, asignarle 0 si la deuda con garantia actual es 0 y tiene NA 2. si 3. usar al menos 5 metricas para compararlos 4. ambas: evaluar la capacidad predictiva y proporcionar las recomendaciones
+
+###### ChatGPT Plus
+
+| 
+
+Perfecto, con esos puntos en claro, podemos avanzar.
+
+Voy a estructurar el análisis en los siguientes pasos:
+
+1.  **Limpieza y preprocesamiento de datos**
+
+    -   Imputación de `max_sit_mes_con_garantia`.
+
+    -   Detección y tratamiento de outliers si es necesario.
+
+    -   Transformaciones o normalizaciones necesarias.
+
+2.  **Análisis exploratorio de datos (EDA)**
+
+    -   Distribuciones univariadas de las variables.
+
+    -   Detección visual y estadística de outliers.
+
+    -   Correlaciones entre las variables predictoras.
+
+3.  **Reducción de dimensionalidad (PCA)**
+
+    -   Análisis de componentes principales.
+
+    -   Interpretación de las principales componentes.
+
+    -   Evaluación de si diferencian los tipos de personas.
+
+4.  **Segmentación de clientes (Clustering)**
+
+    -   Identificación de grupos dentro de los deudores.
+
+    -   Caracterización de los segmentos encontrados.
+
+5.  **Modelado predictivo del default**
+
+    -   Construcción de al menos dos modelos (CART, Random Forest, otros).
+
+    -   Comparación con al menos cinco métricas de desempeño.
+
+    -   Evaluación de importancia de variables.
+
+6.  **Recomendaciones y conclusiones**
+
+    -   Evaluación del uso del modelo para futuros créditos.
+
+    -   Limitaciones del análisis y posibles mejoras.
+
+Voy a comenzar con la limpieza e imputación de datos en R. ¿Querés que incluya código y explicaciones en cada paso o solo el código con comentarios?
+
+##### Tú dijiste:
+
+si, por favor
+
+###### ChatGPT Plus
+
+Voy a comenzar con el **preprocesamiento de datos**, centrándome en la imputación de `max_sit_mes_con_garantia`.
+
+### 📌 **Paso 1: Limpieza e imputación de datos**
+
+La columna `max_sit_mes_con_garantia` debe tomar el valor **0 si `deuda_con_garantia_actual` es 0 y tiene NA**.
+
+Aquí está el código en R con `tidyverse`:
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Cargar paquetes necesarios
+library(tidyverse)
+
+# Simulación de datos de ejemplo
+set.seed(123)
+datos <- tibble(
+  deuda_con_garantia_actual = c(0, 1, 0, 1, 0, 0, 1, NA, 0, 1),
+  max_sit_mes_con_garantia = c(NA, 3, NA, 2, NA, 4, 1, 5, NA, NA)
+)
+
+# Aplicar la imputación: si deuda_con_garantia_actual es 0 y max_sit_mes_con_garantia es NA, se asigna 0
+datos <- datos %>%
+  mutate(max_sit_mes_con_garantia = if_else(
+    is.na(max_sit_mes_con_garantia) & deuda_con_garantia_actual == 0, 
+    0, 
+    max_sit_mes_con_garantia
+  ))
+
+# Ver resultado
+print(datos)
+```
+
+🔹 **Explicación del código:**
+
+-   Se usa `mutate()` para modificar `max_sit_mes_con_garantia`.
+
+-   `if_else()` verifica si el valor es NA y si `deuda_con_garantia_actual` es 0.
+
+-   En esos casos, se reemplaza con **0**, en los demás se mantiene el valor original.
+
+------------------------------------------------------------------------
+
+### 📊 **Siguientes pasos**
+
+Si esta imputación está bien, avanzamos con:
+
+1.  **Detección y tratamiento de outliers**
+
+2.  **EDA (Análisis Exploratorio de Datos)**
+
+¿Querés que analicemos outliers en alguna variable en particular?
+
+##### Tú dijiste:
+
+analiza outliers en todas las variables que sea necesario y factible hacerlo
+
+###### ChatGPT Plus
+
+Voy a analizar los **outliers** en todas las variables numéricas del dataset. Utilizaré el método de **caja y bigotes (IQR)** para identificar valores atípicos.
+
+------------------------------------------------------------------------
+
+### 📌 **Paso 1: Identificar variables numéricas**
+
+Usaremos `select(where(is.numeric))` para trabajar solo con las variables numéricas.
+
+### 📌 **Paso 2: Detección de outliers con IQR**
+
+Un valor es considerado **outlier** si está fuera del rango:
+
+\[Q1−1.5×IQR,Q3+1.5×IQR\]\[Q1−1.5×IQR,Q3+1.5×IQR\]
+
+donde:
+
+-   **Q1** es el **percentil 25**
+
+-   **Q3** es el **percentil 75**
+
+-   **IQR** es la **diferencia entre Q3 y Q1**
+
+Aquí está el código en R:
+
+------------------------------------------------------------------------
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Cargar paquetes
+library(tidyverse)
+
+# Función para detectar outliers con IQR
+detectar_outliers <- function(df) {
+  df %>%
+    select(where(is.numeric)) %>%  # Filtrar solo columnas numéricas
+    pivot_longer(everything(), names_to = "variable", values_to = "valor") %>%
+    group_by(variable) %>%
+    summarise(
+      Q1 = quantile(valor, 0.25, na.rm = TRUE),
+      Q3 = quantile(valor, 0.75, na.rm = TRUE),
+      IQR = Q3 - Q1,
+      Limite_Inferior = Q1 - 1.5 * IQR,
+      Limite_Superior = Q3 + 1.5 * IQR,
+      Outliers = sum(valor < Limite_Inferior | valor > Limite_Superior, na.rm = TRUE),
+      Total_Datos = sum(!is.na(valor)),
+      Porcentaje_Outliers = round((Outliers / Total_Datos) * 100, 2)
+    ) %>%
+    arrange(desc(Porcentaje_Outliers))
+}
+
+# Aplicar función al dataset
+resumen_outliers <- detectar_outliers(datos)
+
+# Mostrar resultado
+print(resumen_outliers)
+```
+
+------------------------------------------------------------------------
+
+### 📊 **Interpretación del resultado**
+
+1.  **La tabla muestra**:
+
+    -   La cantidad de outliers por variable
+
+    -   El porcentaje de datos atípicos
+
+    -   Los límites superior e inferior
+
+2.  **Si una variable tiene muchos outliers**, podemos:
+
+    -   **Mantenerlos**, si tienen significado dentro del contexto
+
+    -   **Caparlos (Winsorizing)** si son extremos pero reales
+
+    -   **Eliminar valores erróneos**, si se deben a errores de carga
+
+------------------------------------------------------------------------
+
+### 📌 **Siguientes pasos**
+
+🔹 **¿Te gustaría visualizar los outliers con boxplots antes de decidir cómo tratarlos?**
+
+##### Tú dijiste:
+
+si, por favor, y agregar el codigo para visualizacion en una matriz de 6 columnas
+
+###### ChatGPT Plus
+
+Voy a generar una **matriz de boxplots** con 6 columnas para visualizar los outliers de las variables numéricas.
+
+------------------------------------------------------------------------
+
+### 📌 **Código R para visualización**
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Cargar paquetes
+library(tidyverse)
+library(ggplot2)
+
+# Función para graficar boxplots en una matriz de 6 columnas
+graficar_boxplots <- function(df) {
+  df %>%
+    select(where(is.numeric)) %>%
+    pivot_longer(everything(), names_to = "variable", values_to = "valor") %>%
+    ggplot(aes(x = variable, y = valor)) +
+    geom_boxplot(outlier.color = "red", outlier.shape = 16, outlier.size = 2) +
+    facet_wrap(~variable, scales = "free", ncol = 6) +  # Matriz de 6 columnas
+    theme_minimal() +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank(),
+          strip.text = element_text(size = 10, face = "bold")) +
+    labs(title = "Distribución de Outliers por Variable",
+         y = "Valor", x = "")
+}
+
+# Aplicar la función al dataset
+graficar_boxplots(datos)
+```
+
+------------------------------------------------------------------------
+
+### 📊 **Explicación del código**
+
+1.  **Se seleccionan las variables numéricas** con `select(where(is.numeric))`.
+
+2.  **Se reorganizan en formato largo** (`pivot_longer`) para facilitar la visualización.
+
+3.  **Se genera un boxplot por variable** con `geom_boxplot()`, resaltando outliers en rojo.
+
+4.  **Los gráficos se organizan en una matriz de 6 columnas** (`facet_wrap(~variable, ncol = 6)`).
+
+5.  **Se mejora el diseño con `theme_minimal()`** y se eliminan etiquetas innecesarias.
+
+------------------------------------------------------------------------
+
+### 📌 **¿Cómo interpretar los gráficos?**
+
+-   **Puntos rojos** → outliers detectados.
+
+-   **Si hay valores extremadamente alejados**, analizar si deben **tratarse o mantenerse**.
+
+🔹 **¿Quieres que implemente una estrategia automática para tratarlos?** (Ejemplo: Winsorizing, eliminación, etc.)
+
+##### Tú dijiste:
+
+como podriamos manejar los outliers usando clustering?
+
+###### ChatGPT Plus
+
+Podemos manejar los **outliers** usando **clustering** de varias maneras. Un enfoque común es usar un **modelo de clustering** para detectar observaciones que están **aisladas** o **pertenecen a un pequeño grupo separado**. Algunas opciones son:
+
+------------------------------------------------------------------------
+
+### 📌 **Métodos de Clustering para Detectar Outliers**
+
+#### **1️⃣ DBSCAN (Density-Based Spatial Clustering of Applications with Noise)**
+
+-   Detecta outliers como **ruido** (puntos que no pertenecen a ningún clúster denso).
+
+-   Ideal para conjuntos de datos con **formas irregulares**.
+
+-   No requiere especificar el número de clústeres.
+
+-   Identifica los puntos alejados del resto como **outliers**.
+
+#### **2️⃣ K-Means + Distancia al Centroide**
+
+-   Se asigna cada observación a un **clúster**.
+
+-   Los puntos con mayor **distancia al centroide** pueden considerarse **outliers**.
+
+-   Se pueden definir **umbrales** para marcar valores anómalos.
+
+#### **3️⃣ Isolation Forest o LOF (Local Outlier Factor)**
+
+-   Técnicas especializadas en detección de anomalías que pueden combinarse con clustering.
+
+-   Isolation Forest aísla anomalías en pocas iteraciones.
+
+-   LOF evalúa la densidad local y detecta puntos con densidad baja.
+
+------------------------------------------------------------------------
+
+### 📌 **Implementación en R con DBSCAN**
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Cargar paquetes
+library(dbscan)
+library(ggplot2)
+library(tidyverse)
+
+# Normalizar las variables numéricas
+datos_norm <- datos %>%
+  select(where(is.numeric)) %>%
+  scale()
+
+# Aplicar DBSCAN (parámetros óptimos deben ajustarse según el dataset)
+modelo_dbscan <- dbscan(datos_norm, eps = 0.5, minPts = 5)
+
+# Agregar etiquetas de cluster y detectar outliers (-1 en DBSCAN)
+datos <- datos %>%
+  mutate(cluster = as.factor(modelo_dbscan$cluster),
+         outlier = ifelse(cluster == "-1", "Sí", "No"))
+
+# Visualización: PCA para reducir dimensiones
+pca <- prcomp(datos_norm, center = TRUE, scale. = TRUE)
+df_pca <- as.data.frame(pca$x[, 1:2]) %>%
+  mutate(cluster = datos$cluster, outlier = datos$outlier)
+
+ggplot(df_pca, aes(x = PC1, y = PC2, color = outlier)) +
+  geom_point(alpha = 0.7, size = 3) +
+  labs(title = "Detección de Outliers con DBSCAN",
+       x = "Componente Principal 1", y = "Componente Principal 2") +
+  scale_color_manual(values = c("No" = "blue", "Sí" = "red")) +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+### 📌 **Explicación**
+
+1.  **Se normalizan las variables numéricas** para evitar sesgos por escalas diferentes.
+
+2.  **Se aplica DBSCAN** para identificar outliers (los que no pertenecen a ningún grupo).
+
+3.  **Se usa PCA** para reducir la dimensionalidad y visualizar los resultados.
+
+4.  **Los puntos rojos en el gráfico** representan los **outliers detectados**.
+
+------------------------------------------------------------------------
+
+🔹 **¿Quieres que probemos otro método como K-Means o Isolation Forest?**
+
+##### Tú dijiste:
+
+si, por favor, con ambos
+
+###### ChatGPT Plus
+
+Aquí tienes la implementación de **K-Means con distancia al centroide** e **Isolation Forest** para detectar outliers en tu dataset.
+
+------------------------------------------------------------------------
+
+## 📌 **1️⃣ K-Means + Distancia al Centroide**
+
+**Idea:** Los outliers son los puntos más alejados del centroide de su clúster.
+
+### **Código en R**
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Cargar paquetes
+library(tidyverse)
+library(cluster)
+library(ggplot2)
+
+# Normalizar las variables numéricas
+datos_norm <- datos %>%
+  select(where(is.numeric)) %>%
+  scale()
+
+# Determinar el número óptimo de clústeres con el método del codo
+set.seed(123)
+wss <- map_dbl(1:10, ~kmeans(datos_norm, centers = .x, nstart = 25)$tot.withinss)
+
+ggplot(data.frame(Clusters = 1:10, WSS = wss), aes(x = Clusters, y = WSS)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Método del Codo para K-Means", x = "Número de Clústeres", y = "Suma de Cuadrados")
+
+# Aplicar K-Means con el número óptimo de clusters (ajustar según gráfico)
+k <- 4  # Ajustar según el codo
+modelo_kmeans <- kmeans(datos_norm, centers = k, nstart = 25)
+
+# Calcular distancia al centroide más cercano
+distancias <- apply(modelo_kmeans$centers[modelo_kmeans$cluster, ], 1, function(centroide) {
+  sqrt(rowSums((datos_norm - centroide)^2))
+})
+
+# Identificar outliers como los puntos con distancia más alta (percentil 95)
+umbral <- quantile(distancias, 0.95)
+datos <- datos %>%
+  mutate(cluster_kmeans = as.factor(modelo_kmeans$cluster),
+         outlier_kmeans = ifelse(distancias > umbral, "Sí", "No"))
+
+# Visualización con PCA
+pca <- prcomp(datos_norm, center = TRUE, scale. = TRUE)
+df_pca <- as.data.frame(pca$x[, 1:2]) %>%
+  mutate(cluster = datos$cluster_kmeans, outlier = datos$outlier_kmeans)
+
+ggplot(df_pca, aes(x = PC1, y = PC2, color = outlier)) +
+  geom_point(alpha = 0.7, size = 3) +
+  labs(title = "Detección de Outliers con K-Means",
+       x = "Componente Principal 1", y = "Componente Principal 2") +
+  scale_color_manual(values = c("No" = "blue", "Sí" = "red")) +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+## 📌 **2️⃣ Isolation Forest**
+
+**Idea:** Un algoritmo de bosque aleatorio que aísla outliers en menos iteraciones.
+
+### **Código en R**
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Cargar paquete
+library(isotree)
+
+# Entrenar modelo de Isolation Forest
+modelo_iforest <- isolation.forest(datos_norm, ntrees = 100)
+
+# Obtener puntajes de anomalía (cuanto mayor, más probable que sea outlier)
+scores <- predict(modelo_iforest, datos_norm, type = "score")
+
+# Definir umbral de outlier (percentil 95)
+umbral_iforest <- quantile(scores, 0.95)
+datos <- datos %>%
+  mutate(outlier_iforest = ifelse(scores > umbral_iforest, "Sí", "No"))
+
+# Visualización con PCA
+df_pca <- df_pca %>%
+  mutate(outlier_iforest = datos$outlier_iforest)
+
+ggplot(df_pca, aes(x = PC1, y = PC2, color = outlier_iforest)) +
+  geom_point(alpha = 0.7, size = 3) +
+  labs(title = "Detección de Outliers con Isolation Forest",
+       x = "Componente Principal 1", y = "Componente Principal 2") +
+  scale_color_manual(values = c("No" = "blue", "Sí" = "red")) +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+## 📌 **Resumen**
+
+| Método | Ventajas | Desventajas |
+|------------------------|------------------------|------------------------|
+| **DBSCAN** | Detecta outliers sin necesidad de predefinir `k`. Ideal para datos con formas irregulares. | Sensible a `eps` y `minPts`, puede fallar en datos de alta dimensión. |
+| **K-Means + Distancia** | Fácil de interpretar y visualizar. Funciona bien en datos estructurados. | Necesita definir `k`, no detecta bien outliers en datos no esféricos. |
+| **Isolation Forest** | Eficiente en grandes volúmenes de datos, no necesita definir `k`. | Puede ser menos interpretable que K-Means. |
+
+🔹 **¿Cuál de los métodos te resulta más útil para tu análisis?** 🚀
+
+##### Tú dijiste:
+
+usar un metodo de aglomeracion jerarquico usando dendogramas e identificar los clusters usando el indice silhouette
+
+###### ChatGPT Plus
+
+Aquí tienes el análisis de clustering jerárquico con dendrogramas e identificación de clusters mediante el **índice de Silhouette** en R.
+
+------------------------------------------------------------------------
+
+## 📌 **1️⃣ Clustering Jerárquico + Dendrograma**
+
+**Idea:** Agrupamos las observaciones basándonos en similitud y visualizamos la estructura en un dendrograma.
+
+### **Código en R**
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Cargar paquetes
+library(tidyverse)
+library(cluster)
+library(factoextra)
+
+# Normalizar los datos numéricos
+datos_norm <- datos %>%
+  select(where(is.numeric)) %>%
+  scale()
+
+# Crear una matriz de distancias (método Euclidiano)
+dist_matrix <- dist(datos_norm, method = "euclidean")
+
+# Aplicar clustering jerárquico usando el método de Ward
+hclust_model <- hclust(dist_matrix, method = "ward.D2")
+
+# Visualizar el dendrograma
+fviz_dend(hclust_model, k = 4, 
+          cex = 0.7, 
+          rect = TRUE, 
+          rect_fill = TRUE, 
+          rect_border = "blue", 
+          main = "Dendrograma - Clustering Jerárquico")
+```
+
+------------------------------------------------------------------------
+
+## 📌 **2️⃣ Determinación del Número Óptimo de Clusters con el Índice de Silhouette**
+
+**Idea:** Se evalúa qué cantidad de clusters es óptima en base a la separación y cohesión de los grupos.
+
+### **Código en R**
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Evaluar el índice de Silhouette para distintos valores de k
+silhouette_scores <- map_dbl(2:10, function(k) {
+  cluster_assignments <- cutree(hclust_model, k = k)
+  mean(silhouette(cluster_assignments, dist_matrix)[, 3])
+})
+
+# Visualizar el índice de Silhouette
+sil_df <- tibble(k = 2:10, Silhouette = silhouette_scores)
+ggplot(sil_df, aes(x = k, y = Silhouette)) +
+  geom_line() +
+  geom_point(size = 3, color = "red") +
+  labs(title = "Índice de Silhouette para Diferentes Clusters",
+       x = "Número de Clusters", y = "Índice de Silhouette") +
+  theme_minimal()
+
+# Seleccionar el número óptimo de clusters (máximo índice de Silhouette)
+optimo_k <- sil_df$k[which.max(sil_df$Silhouette)]
+cat("Número óptimo de clusters según Silhouette:", optimo_k, "\n")
+
+# Asignar clusters a cada observación usando el número óptimo
+datos <- datos %>%
+  mutate(cluster_hclust = cutree(hclust_model, k = optimo_k))
+```
+
+------------------------------------------------------------------------
+
+## 📌 **3️⃣ Visualización de los Clusters con PCA**
+
+```         
+```
+
+```         
+```
+
+```         
+```
+
+```         
+# Aplicar PCA para visualización
+pca <- prcomp(datos_norm, center = TRUE, scale. = TRUE)
+df_pca <- as.data.frame(pca$x[, 1:2]) %>%
+  mutate(cluster = as.factor(datos$cluster_hclust))
+
+# Graficar los clusters en el espacio PCA
+ggplot(df_pca, aes(x = PC1, y = PC2, color = cluster)) +
+  geom_point(alpha = 0.7, size = 3) +
+  labs(title = "Clusters Identificados con Clustering Jerárquico",
+       x = "Componente Principal 1", y = "Componente Principal 2") +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+## 📌 **Resumen de Resultados**
+
+1️⃣ Se generó un dendrograma para visualizar la estructura de los datos.\
+2️⃣ Se usó el **índice de Silhouette** para determinar el número óptimo de clusters.\
+3️⃣ Se asignaron clusters y se visualizó la distribución en un **gráfico PCA**.
+
+🔹 **¿Te gustaría que analicemos más características de los clusters formados?** 🚀
+
+ChatGPT puede cometer errores. Considera verificar la información importante.

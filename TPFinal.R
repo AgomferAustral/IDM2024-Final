@@ -1,3 +1,8 @@
+---
+title: "TPFinal IDM - BCRA"
+format: html
+editor: visual
+---
 # TP Final IDM - trabajo
 
 
@@ -332,6 +337,16 @@ plot_distribution <- function(data, column) {
   }
 }
 
+
+# Creamos una lista de gráficos de distribución para cada columna
+plots <- lapply(colnames(df_seleccionados), function(column) {
+  plot_distribution(df_seleccionados, column)
+})
+
+# Presentamos los gráficos en una matriz
+do.call(grid.arrange, c(plots, ncol = 5))
+
+
 # Alternativa B
 
 library(MASS)     # Permite calcular el número optimo de bins
@@ -408,6 +423,8 @@ boxplots <- Filter(Negate(is.null), boxplots)
 # Presentamos los gráficos en una matriz
 do.call(grid.arrange, c(boxplots, ncol = 6))
 
+
+
 # Outliers
 
 # Función para identificar outliers usando el IQR
@@ -466,7 +483,9 @@ print(matriz_corr)
 corrplot(matriz_corr, method = "color", type = "upper", 
          tl.col = "black", tl.srt = 45, addCoef.col = "black")
 
-# Correlaciones 2 
+#
+# Correlaciones 2 -> No guarda nada en pair_panels.png!!!
+#
 
 # Guardamos el gráfico en un archivo PNG
 png("pairs_panels.png", width = 1200, height = 1200)
